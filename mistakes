@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyFuel Client - Reports</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --burnt-orange: #D35400;
+            --gold: #F39C12;
+            --black: #2C3E50;
+            --light-gold: rgba(243, 156, 18, 0.1);
+            --bs-primary: var(--burnt-orange);
+            --bs-primary-rgb: 211, 84, 0;
+        }
+
+        #sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            min-height: 100vh;
+            background: var(--black);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        #sidebar.active {
+            margin-left: -250px;
+        }
+
+        #sidebar .sidebar-header {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        #sidebar ul.components {
+            padding: 20px 0;
+        }
+
+        #sidebar ul li a {
+            padding: 10px 20px;
+            font-size: 1.1em;
+            display: block;
+            color: white;
+            text-decoration: none;
+        }
+
+        #sidebar ul li a:hover {
+            background: var(--burnt-orange);
+        }
+
+        #sidebar ul li.active > a {
+            background: var(--burnt-orange);
+        }
+
+        .dashboard-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background-color: var(--light-gold);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--burnt-orange);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        .report-btn {
+            transition: all 0.3s;
+        }
+
+        .report-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>MyFuel Admin</h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li>
+                    <a href="index.html"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
+                </li>
+                <li>
+                    <a href="vehicles.html"><i class="fas fa-truck me-2"></i>Vehicles</a>
+                </li>
+                <li>
+                    <a href="drivers.html"><i class="fas fa-users me-2"></i>Drivers</a>
+                </li>
+                <li>
+                    <a href="fuel-tanks.html"><i class="fas fa-gas-pump me-2"></i>Fuel Tanks</a>
+                </li>
+                <li>
+                    <a href="fuel-usage.html"><i class="fas fa-chart-line me-2"></i>Fuel Usage</a>
+                </li>
+                <li>
+                    <a href="transactions.html"><i class="fas fa-receipt me-2"></i>Transactions</a>
+                </li>
+                <li class="active">
+                    <a href="reports.html"><i class="fas fa-chart-bar me-2"></i>Reports</a>
+                </li>
+                <li>
+                    <a href="settings.html"><i class="fas fa-cog me-2"></i>Settings</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content" class="p-4 w-100">
+            <!-- Top Navigation -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Reports Content -->
+            <div class="container-fluid">
+                <!-- Summary Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="text-muted">Total Consumption</h6>
+                                        <h3>24,580 L</h3>
+                                        <p class="text-success mb-0"><i class="fas fa-arrow-up me-1"></i>12.5%</p>
+                                    </div>
+                                    <div class="card-icon">
+                                        <i class="fas fa-gas-pump"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="text-muted">Total Cost</h6>
+                                        <h3>R 589,920</h3>
+                                        <p class="text-danger mb-0"><i class="fas fa-arrow-down me-1"></i>8.3%</p>
+                                    </div>
+                                    <div class="card-icon">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="text-muted">Efficiency Score</h6>
+                                        <h3>85%</h3>
+                                        <p class="text-success mb-0"><i class="fas fa-arrow-up me-1"></i>5.2%</p>
+                                    </div>
+                                    <div class="card-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="text-muted">CO2 Savings</h6>
+                                        <h3>12.5 tons</h3>
+                                        <p class="text-success mb-0"><i class="fas fa-arrow-up me-1"></i>15.8%</p>
+                                    </div>
+                                    <div class="card-icon">
+                                        <i class="fas fa-leaf"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 1 -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Monthly Consumption & Cost Trends</h5>
+                                <div class="chart-container">
+                                    <canvas id="consumptionTrendChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Fuel Usage by Vehicle Type</h5>
+                                <div class="chart-container">
+                                    <canvas id="vehicleTypeChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 2 -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Efficiency Comparison</h5>
+                                <div class="chart-container">
+                                    <canvas id="efficiencyChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Environmental Impact</h5>
+                                <div class="chart-container">
+                                    <canvas id="environmentalChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Charts Section -->
+                <!-- Driver Performance and Peak Usage -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Driver Performance Analytics</h5>
+                                <div class="chart-container">
+                                    <canvas id="driverPerformanceChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Peak Usage Times</h5>
+                                <div class="chart-container">
+                                    <canvas id="peakUsageChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Maintenance and Fuel Price -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Maintenance Cost Analysis</h5>
+                                <div class="chart-container">
+                                    <canvas id="maintenanceChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Fuel Price Trends</h5>
+                                <div class="chart-container">
+                                    <canvas id="fuelPriceChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usage Forecast -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">6-Month Usage Forecast</h5>
+                                <div class="chart-container">
+                                    <canvas id="forecastChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Route Optimization -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Route Optimization Map</h5>
+                                <div class="d-flex justify-content-end mb-2">
+                                    <select class="form-select w-auto">
+                                        <option>All Routes</option>
+                                        <option>High Traffic Routes</option>
+                                        <option>Optimization Opportunities</option>
+                                    </select>
+                                </div>
+                                <div id="routeMap" style="height: 400px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicle Health and Cost Analysis -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Vehicle Health Dashboard</h5>
+                                <div class="chart-container">
+                                    <canvas id="vehicleHealthChart"></canvas>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>3 vehicles require maintenance
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Cost Per Kilometer Analysis</h5>
+                                <div class="chart-container">
+                                    <canvas id="costPerKmChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fuel Theft Detection and Weather Impact -->
+                <div class="row mb-4">
+                    <div class="col-md-7">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Fuel Consumption Anomalies</h5>
+                                <div class="chart-container">
+                                    <canvas id="anomalyDetectionChart"></canvas>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="alert alert-danger">
+                                        <i class="fas fa-exclamation-circle me-2"></i>2 potential anomalies detected this month
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Weather Impact Analysis</h5>
+                                <div class="chart-container">
+                                    <canvas id="weatherImpactChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carbon Footprint Calculator -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Environmental Impact Metrics</h5>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="chart-container">
+                                            <canvas id="carbonFootprintChart"></canvas>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="carbon-stats p-3 bg-light rounded">
+                                            <h6 class="mb-3">Carbon Footprint Summary</h6>
+                                            <div class="mb-2">
+                                                <small class="text-muted">Total CO2 Emissions</small>
+                                                <h4>156.8 tons</h4>
+                                            </div>
+                                            <div class="mb-2">
+                                                <small class="text-muted">YoY Change</small>
+                                                <h4 class="text-success">-12.5%</h4>
+                                            </div>
+                                            <div>
+                                                <small class="text-muted">Trees needed to offset</small>
+                                                <h4>7,840</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EnviroBoost Impact Analysis -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <div class="card dashboard-card">
+                                            <div class="card-body">
+                                                <h5 class="card-title">
+                                                    EnviroBoost Impact Analysis
+                                                    <button class="btn btn-sm btn-outline-primary float-end" onclick="toggleEnviroBoostPeriod()">
+                                                        <i class="fas fa-sync-alt me-1"></i>Switch Period
+                                    </button>
+                                </h5>
+                                <div class="row">
+                                    <!-- Summary Cards -->
+                                    <div class="col-12 mb-4">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="card bg-success text-white">
+                                                    <div class="card-body">
+                                                        <h6>Fuel Savings</h6>
+                                                        <h2 class="mb-0">15.8%</h2>
+                                                        <small>Monthly Average</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="card bg-info text-white">
+                                                    <div class="card-body">
+                                                        <h6>Maintenance Cost Reduction</h6>
+                                                        <h2 class="mb-0">23.4%</h2>
+                                                        <small>Monthly Average</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="card bg-primary text-white">
+                                                    <div class="card-body">
+                                                        <h6>CO₂ Reduction</h6>
+                                                        <h2 class="mb-0">18.2%</h2>
+                                                        <small>Monthly Average</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Comparison Charts -->
+                                    <div class="col-md-6">
+                                        <div class="chart-container" style="position: relative; height:300px;">
+                                            <canvas id="enviroBoostConsumption"></canvas>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="chart-container" style="position: relative; height:300px;">
+                                            <canvas id="enviroBoostEmissions"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- ROI Calculator -->
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Return on Investment Calculator</h6>
+                                                <div class="row align-items-center">
+                                                    <div class="col-md-4">
+                                                        <label>Fleet Size</label>
+                                                        <input type="number" class="form-control" id="fleetSize" value="10" min="1">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>Average Monthly Fuel Cost (R)</label>
+                                                        <input type="number" class="form-control" id="fuelCost" value="50000" min="0">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="bg-success text-white p-3 rounded">
+                                                            <h6>Estimated Annual Savings</h6>
+                                                            <h3 id="annualSavings">R94,800</h3>
+                                                            <small>ROI Period: 3.2 months</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Reports Section -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">Download Reports</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <button class="btn btn-outline-primary w-100 report-btn">
+                                            <i class="fas fa-file-pdf me-2"></i>Monthly Summary
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-outline-primary w-100 report-btn">
+                                            <i class="fas fa-file-excel me-2"></i>Detailed Analysis
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-outline-primary w-100 report-btn">
+                                            <i class="fas fa-file-csv me-2"></i>Raw Data Export
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-outline-primary w-100 report-btn">
+                                            <i class="fas fa-chart-pie me-2"></i>Custom Report
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Sidebar Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('sidebarCollapse').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Consumption Trend Chart
+        new Chart(document.getElementById('consumptionTrendChart'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Consumption (L)',
+                    data: [1800, 2100, 1950, 2300, 2150, 2400, 2300, 2500, 2400, 2600, 2450, 2580],
+                    borderColor: '#D35400',
+                    tension: 0.4
+                }, {
+                    label: 'Cost (R)',
+                    data: [43200, 50400, 46800, 55200, 51600, 57600, 55200, 60000, 57600, 62400, 58800, 61920],
+                    borderColor: '#F39C12',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Vehicle Type Chart
+        new Chart(document.getElementById('vehicleTypeChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Heavy Trucks', 'Delivery Vans', 'Company Cars', 'Other'],
+                datasets: [{
+                    data: [45, 30, 15, 10],
+                    backgroundColor: ['#D35400', '#F39C12', '#2ECC71', '#3498DB']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Efficiency Chart
+        new Chart(document.getElementById('efficiencyChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Heavy Trucks', 'Delivery Vans', 'Company Cars'],
+                datasets: [{
+                    label: 'Current (L/100km)',
+                    data: [32.5, 12.8, 8.5],
+                    backgroundColor: '#D35400'
+                }, {
+                    label: 'Target (L/100km)',
+                    data: [30.0, 11.5, 7.5],
+                    backgroundColor: '#F39C12'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Environmental Impact Chart
+        new Chart(document.getElementById('environmentalChart'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'CO2 Emissions (tons)',
+                    data: [45, 42, 40, 38, 35, 32],
+                    borderColor: '#2ECC71',
+                    fill: true,
+                    backgroundColor: 'rgba(46, 204, 113, 0.1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+        // Driver Performance Analytics
+        new Chart(document.getElementById('driverPerformanceChart'), {
+            type: 'radar',
+            data: {
+                labels: ['Fuel Efficiency', 'Safe Driving', 'Route Optimization', 'Maintenance Score', 'On-Time Delivery'],
+                datasets: [{
+                    label: 'Top Performer',
+                    data: [95, 90, 85, 88, 92],
+                    borderColor: '#2ECC71',
+                    backgroundColor: 'rgba(46, 204, 113, 0.2)'
+                }, {
+                    label: 'Average',
+                    data: [75, 78, 72, 75, 76],
+                    borderColor: '#F39C12',
+                    backgroundColor: 'rgba(243, 156, 18, 0.2)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        min: 0,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Peak Usage Times
+        new Chart(document.getElementById('peakUsageChart'), {
+            type: 'bar',
+            data: {
+                labels: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'],
+                datasets: [{
+                    label: 'Weekday Usage',
+                    data: [10, 5, 25, 85, 65, 75, 45, 15],
+                    backgroundColor: '#D35400'
+                }, {
+                    label: 'Weekend Usage',
+                    data: [5, 2, 15, 45, 35, 40, 25, 8],
+                    backgroundColor: '#F39C12'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Refuels'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Maintenance Cost Analysis
+        new Chart(document.getElementById('maintenanceChart'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Preventive Maintenance',
+                    data: [4500, 3800, 5200, 4200, 4800, 4600],
+                    borderColor: '#3498DB',
+                    tension: 0.4
+                }, {
+                    label: 'Repair Costs',
+                    data: [2200, 3500, 1800, 2500, 2000, 1500],
+                    borderColor: '#E74C3C',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Cost (R)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Fuel Price Trends
+        new Chart(document.getElementById('fuelPriceChart'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Diesel Price/L',
+                    data: [23.50, 24.20, 23.80, 24.50, 24.80, 24.60],
+                    borderColor: '#8E44AD',
+                    fill: true,
+                    backgroundColor: 'rgba(142, 68, 173, 0.1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+
+        // Usage Forecast
+        new Chart(document.getElementById('forecastChart'), {
+            type: 'line',
+            data: {
+                labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Predicted Usage (L)',
+                    data: [2600, 2750, 2850, 3000, 3200, 3400],
+                    borderColor: '#16A085',
+                    borderDash: [5, 5]
+                }, {
+                    label: 'Confidence Range',
+                    data: [2400, 2500, 2600, 2700, 2800, 2900],
+                    borderColor: 'rgba(22, 160, 133, 0.2)',
+                    backgroundColor: 'rgba(22, 160, 133, 0.1)',
+                    fill: 1
+                }, {
+                    label: 'Confidence Range',
+                    data: [2800, 3000, 3100, 3300, 3600, 3900],
+                    borderColor: 'rgba(22, 160, 133, 0.2)',
+                    backgroundColor: 'rgba(22, 160, 133, 0.1)',
+                    fill: '-1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Liters'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Vehicle Health Dashboard
+        new Chart(document.getElementById('vehicleHealthChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Engine', 'Transmission', 'Brakes', 'Tires', 'Electrical'],
+                datasets: [{
+                    label: 'Health Score',
+                    data: [85, 92, 78, 95, 88],
+                    backgroundColor: ['#2ECC71', '#2ECC71', '#F1C40F', '#2ECC71', '#2ECC71']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Cost Per Kilometer Analysis
+        new Chart(document.getElementById('costPerKmChart'), {
+            type: 'bar',
+            data: {
+                labels: ['TRK-001', 'TRK-002', 'VAN-001', 'VAN-002', 'CAR-001'],
+                datasets: [{
+                    label: 'Fuel Cost/km',
+                    data: [4.2, 4.5, 2.8, 2.9, 1.5],
+                    backgroundColor: '#D35400'
+                }, {
+                    label: 'Maintenance Cost/km',
+                    data: [1.8, 2.1, 1.2, 1.1, 0.8],
+                    backgroundColor: '#3498DB'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Cost (R/km)'
+                        }
+                    },
+                    x: {
+                        stacked: true
+                    }
+                }
+            }
+        });
+
+        // Anomaly Detection Chart
+        new Chart(document.getElementById('anomalyDetectionChart'), {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Normal Usage',
+                    data: Array.from({length: 30}, () => ({
+                        x: Math.random() * 100,
+                        y: Math.random() * 50 + 25
+                    })),
+                    backgroundColor: '#3498DB'
+                }, {
+                    label: 'Anomalies',
+                    data: [
+                        {x: 45, y: 95},
+                        {x: 75, y: 85}
+                    ],
+                    backgroundColor: '#E74C3C'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Fuel Usage (L)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Distance (km)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Weather Impact Chart
+        new Chart(document.getElementById('weatherImpactChart'), {
+            type: 'line',
+            data: {
+                labels: ['0°C', '5°C', '10°C', '15°C', '20°C', '25°C', '30°C'],
+                datasets: [{
+                    label: 'Fuel Efficiency',
+                    data: [12.5, 11.8, 11.2, 10.8, 10.5, 10.8, 11.2],
+                    borderColor: '#8E44AD',
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'L/100km'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Carbon Footprint Chart
+        new Chart(document.getElementById('carbonFootprintChart'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'CO2 Emissions',
+                    data: [28.5, 27.2, 26.8, 25.5, 24.8, 24.0],
+                    borderColor: '#16A085',
+                    fill: true,
+                    backgroundColor: 'rgba(22, 160, 133, 0.1)'
+                }, {
+                    label: 'Target',
+                    data: [28.0, 27.0, 26.0, 25.0, 24.0, 23.0],
+                    borderColor: '#E74C3C',
+                    borderDash: [5, 5],
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'CO2 (tons)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Initialize Route Map
+        const map = L.map('routeMap').setView([-26.2041, 28.0473], 10); // Centered on Johannesburg
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        -33.916729, 18.482976
+        // Add sample route
+        const route = [
+            [-33.916729, 18.482976],
+            [-33.916729, 18.482976],
+            [-33.916729, 18.482976]
+        ];
+        L.polyline(route, {color: '#D35400', weight: 5}).addTo(map);
+
+        // Add heat map (simulated high-traffic areas)
+        const heat = L.heatLayer([
+            [-26.2041, 28.0473, 0.8],
+            [-26.1867, 28.0568, 0.5],
+            [-26.1753, 28.0799, 0.3]
+        ], {radius: 25}).addTo(map);
+
+        // EnviroBoost Consumption Comparison
+        new Chart(document.getElementById('enviroBoostConsumption'), {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Before EnviroBoost (L/100km)',
+                    data: [12.5, 12.8, 12.3, 12.6, 12.4, 12.7],
+                    backgroundColor: '#E74C3C',
+                    barPercentage: 0.8
+                }, {
+                    label: 'After EnviroBoost (L/100km)',
+                    data: [10.5, 10.7, 10.4, 10.6, 10.3, 10.5],
+                    backgroundColor: '#2ECC71',
+                    barPercentage: 0.8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Fuel Consumption Comparison',
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        }
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Liters per 100km'
+                        }
+                    }
+                }
+            }
+        });
+
+        // EnviroBoost Emissions Comparison
+        new Chart(document.getElementById('enviroBoostEmissions'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Before EnviroBoost (CO₂ tons)',
+                    data: [28.5, 29.2, 28.8, 29.5, 28.8, 29.0],
+                    borderColor: '#E74C3C',
+                    borderWidth: 3,
+                    fill: false,
+                    tension: 0.1
+                }, {
+                    label: 'After EnviroBoost (CO₂ tons)',
+                    data: [23.3, 23.9, 23.5, 24.1, 23.6, 23.7],
+                    borderColor: '#2ECC71',
+                    borderWidth: 3,
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'CO₂ Emissions Comparison',
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        }
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'CO₂ Emissions (tons)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // ROI Calculator functionality
+        function calculateROI() {
+            const fleetSize = parseInt(document.getElementById('fleetSize').value) || 0;
+            const fuelCost = parseInt(document.getElementById('fuelCost').value) || 0;
+            
+            // Calculate savings (15.8% of fuel costs)
+            const monthlySavings = (fuelCost * 0.158);
+            const annualSavings = monthlySavings * 12;
+            
+            document.getElementById('annualSavings').textContent = 
+                'R' + annualSavings.toLocaleString(undefined, {maximumFractionDigits: 0});
+        }
+
+        // Add event listeners for ROI calculator
+        document.getElementById('fleetSize').addEventListener('input', calculateROI);
+        document.getElementById('fuelCost').addEventListener('input', calculateROI);
+
+        // Period toggle functionality
+        let showingBeforeAfter = true;
+        function toggleEnviroBoostPeriod() {
+            // This function can be expanded to show different time periods
+            // or different comparison metrics
+            showingBeforeAfter = !showingBeforeAfter;
+            // Update charts based on the toggle state
+        }
+
+        // Initialize calculations when page loads
+        calculateROI();
+
+        }); // Close DOMContentLoaded event listener
+
+    </script>
+</body>
+</html>
